@@ -6,8 +6,8 @@
 [switch] $login
 )
 #$URL = "PATH"
-#$ErrorActionPreference ="Stop"
-#$PSDefaultParameterValues['*:ErrorAction']='Stop'
+$ErrorActionPreference ="Stop"
+$PSDefaultParameterValues['*:ErrorAction']='Stop'
 
 #First time tasks
 
@@ -31,15 +31,15 @@ foreach($File in $Files){
     $folderpath=(split-path $file.FullName).Substring(2)
     $remotefolder=$remotepath + $folderpath
     $remotefolder
-        Add-PnPFile -Folder $remotefolder -Path $File.FullName
-        $move_dir_path="\Imported\" + $folderpath
+        Add-PnPFile -Folder $remotefolder -Path $File.FullName -Values @{Created=$file.CreationTimeUTC; Modified=$File.LastWriteTimeUTC;}
+        $move_dir_path=(split-path -qualifier $localpath) +  "\Imported\" + $folderpath
         if ( $true -ne (test-path $move_dir_path) ) {
         new-item -ItemType directory $move_dir_path.TrimStart(".\") }
         
         if($move){
         
         $move_full_path = $move_dir_path + "\" + $file.Name
-        "move" + $move_full_path
+        "move " + $move_full_path
         move-Item -Path $File.FullName -Destination $move_full_path }
     }
 }
